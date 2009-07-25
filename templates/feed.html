@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Blind Feed{% endblock %}
+
+{% block content %}
+    <center><h1>Blind Feed</h1></center>
+
+    <table>
+    {% for status in timeline %}
+        <tr><td>
+            {{ status.blind_text }}
+        </td></tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}
