@@ -5,11 +5,16 @@ class Rating(models.Model):
 	score=models.IntegerField()
 	rater = models.ForeignKey(UserProfile)
 
+class Poster(models.Model):
+	name = models.CharField(max_length=50)
+	id = models.IntegerField()
+	raters = models.ManyToManyField(UserProfile)
+
 class Post(models.Model):
 	text = models.CharField(max_length=150)
-	poster_name = models.CharField(max_length=30)
-	poster_id = models.IntegerField()
 	rating = models.ForeignKey(Rating)
+	poster = models.ForeignKey(Poster)
+	raters = models.ManyToManyField(UserProfile)
 
 
 # Create your models here.
