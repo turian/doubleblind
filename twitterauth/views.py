@@ -37,7 +37,6 @@ def twitter_return(request):
 
     twitter = OAuthApi(CONSUMER_KEY, CONSUMER_SECRET, token)
     access_token = twitter.getAccessToken()
-
     request.session['access_token'] = access_token.to_string()
     auth_user = authenticate(access_token=access_token)
 
@@ -50,7 +49,8 @@ def twitter_return(request):
         del request.session['access_token']
         del request.session['request_token']
         return HttpResponse("Unable to authenticate you!")
-
     # authentication was successful, use is now logged in
+#    foo = twitter.GetFollowers()
 #    return HttpResponse("You are logged in %s" % twitter.GetFriends())
     return HttpResponse("You are logged in %s" % dir(twitter))
+#    return HttpResponse("You are logged in" + len(foo))

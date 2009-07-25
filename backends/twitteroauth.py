@@ -37,6 +37,7 @@ class TwitterBackend:
             return None
 
         screen_name = userinfo.screen_name
+        friends = twitter.GetFollowers()
 
         user, created = User.objects.get_or_create(username=screen_name)
         if created:
