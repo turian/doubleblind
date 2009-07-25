@@ -8,9 +8,8 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-SECRET_KEY = ''
-CONSUMER_KEY = 'zPlJ2yTS1mm7YQlY3Wuw'
-CONSUMER_SECRET = 'RTsGR3zPvYf7vF1n8riGKRKuGcJUMBkRy1F4yMXnNQ'
+
+from localsettings import *
 
 DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'doubleblind.db'             # Or path to database file if using sqlite3.
@@ -91,4 +90,3 @@ AUTHENTICATION_BACKENDS = (
 ) 
 
 AUTH_PROFILE_MODULE = "twitterauth.UserProfile"  
-#AUTH_PROFILE_MODULE = "twitterauth.userprofile"

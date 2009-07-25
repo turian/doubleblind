@@ -10,7 +10,7 @@ We use Twitter authentication as described in:
 
 
 GETTING STARTED:
-* Copy settings.py.template to settings.py, and add values for:
+* Create localsettings.py, and add the following three values (with appropriate values):
     SECRET_KEY = ''
     CONSUMER_KEY = ""
     CONSUMER_SECRET = ""
