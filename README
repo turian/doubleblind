@@ -1,0 +1,10 @@
+doubleblind.at code
+
+written by Joseph Turian and ricree for #oneappday
+    http://browseology.posterous.com/one-day-app-participants
+
+Released under the BSD license.
+
+
+We use Twitter authentication as described in:
+    http://agileweb.wordpress.com/2009/04/28/step-by-step-guide-to-use-sign-in-with-twitter-with-django/#comment-75
