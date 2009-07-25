@@ -14,9 +14,11 @@ GETTING STARTED:
     SECRET_KEY = ''
     CONSUMER_KEY = ""
     CONSUMER_SECRET = ""
+    TEMPLATE_DIRS = ()
 I am not sure how to generate a value for the first one, just grab one
-that Django generates for you.  For the other two values, you will need
-to register with Twitter at http://twitter.com/oauth_clients
+that Django generates for you.  For the middle two values, you will need
+to register with Twitter at http://twitter.com/oauth_clients.
+For the template dirs, use an absolute pathname.
 
 * Install the requirements listed at the top here:
     http://agileweb.wordpress.com/2009/04/28/step-by-step-guide-to-use-sign-in-with-twitter-with-django/#comment-75

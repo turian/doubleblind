@@ -52,4 +52,5 @@ def twitter_return(request):
         return HttpResponse("Unable to authenticate you!")
 
     # authentication was successful, use is now logged in
-    return HttpResponse("You are logged in")
+#    return HttpResponse("You are logged in %s" % twitter.GetFriends())
+    return HttpResponse("You are logged in %s" % dir(twitter))
