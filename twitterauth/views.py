@@ -1,7 +1,8 @@
 from django.conf import settings
+from django.db import models
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import login, authenticate
-
+#from doubleblind.twitterauth.models import UserProfile
 from oauthtwitter import OAuthApi
 import oauth
 

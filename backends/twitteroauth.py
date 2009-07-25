@@ -49,7 +49,7 @@ class TwitterBackend:
 
         # Get the user profile
         userprofile = user.get_profile()
-        userprofile.access_token = access_token
+        userprofile.access_token = access_token.to_string()
         userprofile.url = userinfo.url
         userprofile.location = userinfo.location
         userprofile.description = userinfo.description
