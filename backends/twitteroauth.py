@@ -32,6 +32,7 @@ class TwitterBackend:
         twitter = oauthtwitter.OAuthApi(CONSUMER_KEY, CONSUMER_SECRET, access_token)
         try:
             userinfo = twitter.GetUserInfo()
+
         except:
             # If we cannot get the user information, user cannot be authenticated
             return None
