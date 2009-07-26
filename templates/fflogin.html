@@ -1,6 +1,12 @@
 {%extends "base.html"%}
 {%block title%}Login{%endblock%}
 {%block content%}
+    <p>
+    You are about to conduct a doubleblind experiment.
+    We will determine which of your so-called friends actually make good posts, and which ones waste your time.
+    <br/>
+    We will also infer more sophisticated information about your preferences and interests.
+    </p>
 <center>
 {%if logged_in%}
 <div>You are already logged in: [<a href="/logout">log out</a>] or [<a href="/start">start</a>]</div>
