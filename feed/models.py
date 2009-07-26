@@ -11,6 +11,7 @@ class Poster(models.Model):
 	raters = models.ManyToManyField(UserProfile)
 
 class Post(models.Model):
+	id = models.IntegerField()
 	text = models.CharField(max_length=150)
 	rating = models.ForeignKey(Rating)
 	poster = models.ForeignKey(Poster)

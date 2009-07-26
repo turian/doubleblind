@@ -5,6 +5,7 @@ from django.contrib.auth import login, authenticate
 #from doubleblind.twitterauth.models import UserProfile
 from oauthtwitter import OAuthApi
 import oauth
+from urllib2 import HTTPError
 
 CONSUMER_KEY = getattr(settings, 'CONSUMER_KEY', 'YOUR_KEY')
 CONSUMER_SECRET = getattr(settings, 'CONSUMER_SECRET', 'YOUR_SECRET')
@@ -36,6 +37,10 @@ def twitter_return(request):
         return HttpResponse("Something wrong! Tokens do not match...")
 
     twitter = OAuthApi(CONSUMER_KEY, CONSUMER_SECRET, token)
+    try:
+        fr = twitter.GetFriendsTimeline()
+    except HTTPError as e:
+        return HttpResponse(str(e))
     access_token = twitter.getAccessToken()
     request.session['access_token'] = access_token.to_string()
     auth_user = authenticate(access_token=access_token)
@@ -52,5 +57,5 @@ def twitter_return(request):
     # authentication was successful, use is now logged in
 #    foo = twitter.GetFollowers()
 #    return HttpResponse("You are logged in %s" % twitter.GetFriends())
-    return HttpResponse("You are logged in %s" % dir(twitter))
+    return HttpResponse("You are logged in")
 #    return HttpResponse("You are logged in" + len(foo))
