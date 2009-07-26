@@ -13,6 +13,7 @@ def login(request):
 			request.session['remote_key'] = form.cleaned_data['remote_key']
 			HttpResponseRedirect("/feed/")
 		else:
+			HttpResponse("did not validate")
 	else:
 		form = FFLoginForm()
 	return render_to_response("fflogin.html",{'form':form})

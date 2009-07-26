@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
@@ -26,10 +26,10 @@ def twitter_feed(request, user):
     return render_to_response("feed.html", {"timeline": timeline}, context_instance=RequestContext(request))
 
 _ffsession = None
-def ffsession():
+def ffsession(uname,rkey):
     global _ffsession
     if _ffsession is None:
-        _ffsession = friendfeed.FriendFeed(settings.FRIENDFEED_NICKNAME, settings.FRIENDFEED_REMOTE_KEY)
+        _ffsession = friendfeed.FriendFeed(uname,rkey)
     assert _ffsession is not None
     return _ffsession
 
@@ -37,6 +37,11 @@ def ffsession():
 def friendfeed_feed(request):
     """
     """
-    fstr = simplejson.dumps(ffsession().fetch_favorites())
+    if not (('username' in request.session) and ('remote_key' in request.session)):
+        return HttpResponse('missed info')
+        return HttpResponseRedirect("/login/")
+    uname = request.session['username']
+    rkey = request.session['remote_key']
+    fstr = simplejson.dumps(ffsession(uname,rkey).fetch_favorites())
     #+ ffsession.fetch_public_feed()
     return render_to_response("feed.html", {"debug": [fstr]}, context_instance=RequestContext(request))
