@@ -13,7 +13,7 @@ class Poster(models.Model):
 
 class Entry(models.Model):
 	post_id = models.CharField(max_length=60)
-	text = models.CharField(max_length=5000)
+	text = models.CharField(max_length=32768)
 	poster = models.ForeignKey(Poster)
 
 class Rater(models.Model):
