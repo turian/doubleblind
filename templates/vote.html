@@ -8,14 +8,20 @@
 
     <center>
     <table border=1>
-    {% for entry in blind_entries %}
-        <tr><td>
+        <tr><td colspan=3>
             {{ entry|safe }} 
         </td></tr>
-    {% endfor %}
+
+        <tr>
+            <td><a href="{{ thisurl }}/thumbsdown"><img align=left src="/static/thumbs-down.jpg"></a></td>
+            <td><a href="{{ thisurl }}/pass"><center>Pass</center></a></td>
+            <td><a href="{{ thisurl }}/thumbsup"><img align=right src="/static/thumbs-up.jpg"></a></td>
+        </tr>
     </table>
-    <img src="/static/thumbs-up.jpg">
     </center>
+
+    You should pass if you know who the author is, or simply if you do
+    not want to vote on this entry.
 
     <pre>
     {{ debug }}

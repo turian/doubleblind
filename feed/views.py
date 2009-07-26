@@ -43,21 +43,24 @@ def friendfeed_vote(request, number):
     if 'favs' not in request.session:
         request.session['favs'] = ffsession(uname,rkey).fetch_favorites()
     favs = request.session['favs']
-    blind_entries = []
-    for e in favs["entries"]:
-        btxt = e[u"body"]
-        if "thumbnails" in e:
-            btxt += "<br>"
-            for t in e["thumbnails"]:
-                # TODO: check that url and link don't contain "'"
-                btxt += "<a href='%s'><img src='%s' width=%d height=%d></a>" % (t["link"], t["url"], t["width"], t["height"])
-#        if "comments" in e:
-#            btxt += "<table border=1><tr><td>Comments:</td></tr>"
-#            for c in e["comments"]:
-#                btxt += "<tr><td>%s</td></tr>" % c["body"]
-#            btxt += "</table>"
-#        import re
-#        btxt = re.sub("lt", "gt", btxt)
-        blind_entries.append(btxt)
-    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
+    if 'blind_entries' not in request.session:
+        request.session['blind_entries'] = []
+        for e in favs["entries"]:
+            btxt = e[u"body"]
+            if "thumbnails" in e:
+                btxt += "<br>"
+                for t in e["thumbnails"]:
+                    # TODO: check that url and link don't contain "'"
+                    btxt += "<a href='%s'><img src='%s' width=%d height=%d></a>" % (t["link"], t["url"], t["width"], t["height"])
+    #        if "comments" in e:
+    #            btxt += "<table border=1><tr><td>Comments:</td></tr>"
+    #            for c in e["comments"]:
+    #                btxt += "<tr><td>%s</td></tr>" % c["body"]
+    #            btxt += "</table>"
+    #        import re
+    #        btxt = re.sub("lt", "gt", btxt)
+            request.session['blind_entries'].append(btxt)
+    # TODO: Don't hardcode thisurl, infer it
+    return render_to_response("vote.html", {"entry": request.session['blind_entries'][number], "thisurl": "/vote/%d" % number}, context_instance=RequestContext(request))
+#    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
