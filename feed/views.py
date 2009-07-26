@@ -47,35 +47,11 @@ def add_vote(request, entry_index, rating):
     rating = Rating(entry=post,rater=rater,score=rating_score[rating])
     rating.save()
 
-def friendfeed_do_vote(request, rating):
-    if not (('username' in request.session) and ('remote_key' in request.session)):
-        return HttpResponseRedirect("/login/")
-    add_vote(request,request.session['entry_index'], rating)
-    request.session['entry_index']+=1
-    entry_index = request.session['entry_index']
-    if entry_index < len(request.session['blind_entries']):
-        return HttpResponseRedirect("/vote/")
-    else:
-        return HttpResponseRedirect("/results/")
-
-def friendfeed_vote(request, rating=None):
+def friendfeed_initialize(request):
     """
+    Initialize the friendfeed session, given the current authentication information.
+    TODO: Move this out of views.py
     """
-    if 'entry_index' not in request.session:
-        request.session['entry_index'] = 0
-    entry_index = request.session['entry_index']
-    if entry_index >= ENTRY_SEQUENCE_LENGTH:
-        return HttpResponseRedirect("/results/")
-    # TODO: Store previous rating
-    if 'votes' not in request.session:
-        request.session['votes']  = {}
-
-    # TODO: Store previous rating
-
-    if not (('username' in request.session) and ('remote_key' in request.session)):
-#        uname = settings.FRIENDFEED_NICKNAME
-#        rkey = settings.FRIENDFEED_REMOTE_KEY
-        return HttpResponseRedirect("/login/")
     uname = request.session['username']
     rkey = request.session['remote_key']
     if 'ffsession' not in request.session:
@@ -114,6 +90,36 @@ def friendfeed_vote(request, rating=None):
     #        import re
     #        btxt = re.sub("lt", "gt", btxt)
             request.session['blind_entries'].append(btxt)
+
+def friendfeed_do_vote(request, rating):
+    if not (('username' in request.session) and ('remote_key' in request.session)):
+        return HttpResponseRedirect("/login/")
+    add_vote(request,request.session['entry_index'], rating)
+    request.session['entry_index']+=1
+    entry_index = request.session['entry_index']
+    if entry_index < len(request.session['blind_entries']):
+        return HttpResponseRedirect("/vote/")
+    else:
+        return HttpResponseRedirect("/results/")
+
+def friendfeed_vote(request, rating=None):
+    """
+    """
+    if 'entry_index' not in request.session:
+        request.session['entry_index'] = 0
+    entry_index = request.session['entry_index']
+    if entry_index >= ENTRY_SEQUENCE_LENGTH:
+        return HttpResponseRedirect("/results/")
+    # TODO: Store previous rating
+    if 'votes' not in request.session:
+        request.session['votes']  = {}
+
+    # TODO: Store previous rating
+
+    if not (('username' in request.session) and ('remote_key' in request.session)):
+#        uname = settings.FRIENDFEED_NICKNAME
+#        rkey = settings.FRIENDFEED_REMOTE_KEY
+        return HttpResponseRedirect("/login/")
 
     thisurl = "/vote"
 
