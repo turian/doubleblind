@@ -1,6 +1,7 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from random import shuffle
 
 from django.conf import settings
 
@@ -42,17 +43,16 @@ def add_vote(request, entry_index, rating):
     else:
         # TODO: Return 404
         assert 0
+def friendfeed_do_vote(request,rating):
+    add_vote(request,request.session['post_index']-1,rating)
+    return HttpResponseRedirect("/vote/")
 
-def friendfeed_vote(request, entry_index=None, rating=None):
+def friendfeed_vote(request):
     """
     """
-    if entry_index is not None:
-        # TODO: Fail gracefully if not an int
-        entry_index = int(entry_index)
-        add_vote(request, entry_index-1, rating)
-    else:
-        entry_index = 0
-
+    if 'entry_index' not in request.session:
+    	request.session['entry_index'] = 0
+    entry_index = request.session['entry_index']
     # TODO: Store previous rating
 
     if not (('username' in request.session) and ('remote_key' in request.session)):
@@ -87,14 +87,15 @@ def friendfeed_vote(request, entry_index=None, rating=None):
         # TODO: Don't hardcode 5
         # TODO: Unique by author
         request.session['blind_entries'] = request.session['blind_entries'][:5]
+    	shuffle(request.session['blind_entries'])
 
     if entry_index+1 < len(request.session['blind_entries']):
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
-        thisurl = "/vote/%d" % (entry_index+1)
+        thisurl = "/vote"
     else:
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
         thisurl = "/results/%d" % (entry_index+1)
-
+    request.session['entry_index'] = entry_index+1
     return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['blind_entries'], indent=4)}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
