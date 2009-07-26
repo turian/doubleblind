@@ -25,7 +25,10 @@ def twitter_feed(request, user):
         status.blind_text = usernamere.sub("@anonymous", status.blind_text)
     return render_to_response("feed.html", {"timeline": timeline}, context_instance=RequestContext(request))
 
-def friendfeed_vote(request, entry_index=None, rating=None):
+def friendfeed_do_vote(request,entry_index,rating):
+	
+
+def friendfeed_vote(request):
     """
     """
     if entry_index is not None:
