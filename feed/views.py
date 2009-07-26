@@ -55,12 +55,17 @@ def friendfeed_feed(request):
     for e in favs["entries"]:
         btxt = e[u"body"]
         if "thumbnails" in e:
+            btxt += "<br>"
             for t in e["thumbnails"]:
                 # TODO: check that url and link don't contain "'"
                 btxt += "<a href='%s'><img src='%s' width=%d height=%d></a>" % (t["link"], t["url"], t["width"], t["height"])
-                # TODO: Add URL link
-        import re
-        btxt = re.sub("lt", "gt", btxt)
+#        if "comments" in e:
+#            btxt += "<table border=1><tr><td>Comments:</td></tr>"
+#            for c in e["comments"]:
+#                btxt += "<tr><td>%s</td></tr>" % c["body"]
+#            btxt += "</table>"
+#        import re
+#        btxt = re.sub("lt", "gt", btxt)
         blind_entries.append(btxt)
-    return render_to_response("feed.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
-#    return render_to_response("feed.html", {"entries": [simplejson.dumps(e, indent=4) for e in favs["entries"]]}, context_instance=RequestContext(request))
+    return render_to_response("feed.html", {"blind_entries": blind_entries}, context_instance=RequestContext(request))
+#    return render_to_response("feed.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
