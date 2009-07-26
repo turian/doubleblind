@@ -1,7 +1,7 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-
+from random import shuffle,seed
 from doubleblind.feed.models import Entry,Rating,Poster,Rater
 from django.conf import settings
 
@@ -83,7 +83,9 @@ def friendfeed_vote(request, rating=None):
     ffsession = request.session['ffsession']
     if 'favs' not in request.session:
         favs = ffsession.fetch_favorites()['entries']
-        request.session['favs'] = []
+        seed()
+    	shuffle(favs) 
+    	request.session['favs'] = []
         users = {}
         # Find 5 posts by unique people
         for f in favs:
@@ -122,6 +124,11 @@ def friendfeed_vote(request, rating=None):
 
 def friendfeed_results(request):
     results = []
+	if not (('username' in request.session) and ('remote_key' in request.session)):
+        return HttpResponseRedirect("/login/")
+	rater = Rater.objects.get(name=request.session['username'])
+	ratings = Rating.objects.get(rater=rater)
+	posts = [rating.post for rating in ratings]
     for i in request.session['votes']:
         # TODO: Gracefully fail instead of assert?
         assert request.session['votes'][i] in [+1, -1, None]
