@@ -28,8 +28,13 @@ def twitter_feed(request, user):
 def friendfeed_vote(request, entry_index=None, rating=None):
     """
     """
-    # TODO: Fail gracefully if not an int
-    entry_index = int(entry_index)
+    if entry_index is not None:
+        # TODO: Fail gracefully if not an int
+        entry_index = int(entry_index)
+    else:
+        entry_index = -1
+
+    # TODO: Store previous rating
 
     if not (('username' in request.session) and ('remote_key' in request.session)):
 #        uname = settings.FRIENDFEED_NICKNAME
