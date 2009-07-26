@@ -49,7 +49,6 @@ def friendfeed_vote(request, number):
     if not (('username' in request.session) and ('remote_key' in request.session)):
 #        uname = settings.FRIENDFEED_NICKNAME
 #        rkey = settings.FRIENDFEED_REMOTE_KEY
-        return HttpResponse('missed info')
         return HttpResponseRedirect("/login/")
     uname = request.session['username']
     rkey = request.session['remote_key']

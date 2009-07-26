@@ -24,6 +24,7 @@ urlpatterns = patterns('',
 
     url(r'^$', welcome, name='welcome'),
 	url(r'^login/$','doubleblind.ffauth.views.login',name='login'),
+	url(r'^logout/$','doubleblind.ffauth.views.logout',name='logout'),
 #    url('^login/$', twitter_signin, name='login'),  
 #    url('^return/$', twitter_return, name='return'),  
 #    url('^feed/([^/]+)$', twitter_feed, name='feed'),  
