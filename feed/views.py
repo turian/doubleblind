@@ -32,7 +32,7 @@ def add_vote(request, entry_index, rating):
     TODO: This shouldn't be in views
     """
     favs = request.session['favs']
-    postData = favs['entries'][entry_index]
+    postData = favs[entry_index]
     userData = postData['from']
     rater,created = Rater.objects.get_or_create(host=request.META['REMOTE_ADDR'])
     if created:
@@ -111,7 +111,7 @@ def friendfeed_vote(request, rating=None):
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
         thisurl = "/results/%d" % (entry_index+1)
 
-    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": favs["entries"][0]['id']}, context_instance=RequestContext(request))
+    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": favs}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['blind_entries'], indent=4)}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
