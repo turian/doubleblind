@@ -12,7 +12,7 @@ def login(request):
 			request.session['username'] = form.cleaned_data['username']
 			request.session['remote_key'] = form.cleaned_data['remote_key']
 			request.session['ff_auth'] = True
-			return HttpResponseRedirect("/vote")
+			return HttpResponseRedirect("/start")
 		else:
 			return HttpResponse("did not validate")
 	else:

@@ -11,9 +11,13 @@
 <body>
     <div id="header">
         {% block header %}
+        {%if request.session.ff_auth%}
+            <a href="/logout/">Log Out</a>
+            <hr />
+        {%endif%}
+{% comment %}
         <a href="{% url welcome %}">{% trans "Home" %}</a> | <a href="{%if request.session.ff_auth%}/logout/">Log Out{%else%}/login/">Log In{%endif%}</a>
 
-{% comment %}
         {% if user.is_authenticated %}
         {% trans "Logged in" %}: {{ user.username }} 
         (<a href="{% url auth_logout %}">{% trans "Log out" %}</a> | 
@@ -27,7 +31,6 @@
         <a href="{% url auth_login %}">{% trans "Log in" %}</a>
         {% endif %}
 {% endcomment %}
-        <hr />
         {% endblock %}
     </div>
 

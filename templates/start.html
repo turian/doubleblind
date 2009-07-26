@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Instructions{% endblock %}
+
+{% block content %}
+    <center><h1>Instructions</h1></center>
+
+    Welcome <a href="http://friendfeed.com/{{ username }}">{{ username }}</a>.
+
+    <p>
+    You are about to conduct a doubleblind experiment.
+    We will determine which of your so-called friends actually make good posts, and which ones waste your time.
+    </p>
+    <p>
+    You will be shown five recent posts, anonymized.
+    <ul>
+        <li>If you like the entry, give it a <b>thumbs up</b>.</li>
+        <li>If you dislike the entry, give it a <b>thumbs down</b>.</li>
+        <li>If you know who wrote the entry, or just are not sure how you feel about it, simply <b>pass</b>.</li>
+    </ul>
+
+    Are you ready for the doubleblind experiment?
+    <center>
+    <h2><a href="/vote">Start test</a></h2>
+    </center>
+
+{% endblock %}
