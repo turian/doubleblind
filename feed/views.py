@@ -25,21 +25,6 @@ def twitter_feed(request, user):
         status.blind_text = usernamere.sub("@anonymous", status.blind_text)
     return render_to_response("feed.html", {"timeline": timeline}, context_instance=RequestContext(request))
 
-_ffsession = None
-_last_creds = None
-def ffsession(uname,rkey):
-    """
-    Cache the session with the last credentials.
-    """
-    global _ffsession, _last_creds
-    creds = uname,rkey
-    if _ffsession is None or _last_creds != creds:
-        _ffsession = friendfeed.FriendFeed(uname, rkey)
-        _last_creds = creds
-    assert _ffsession is not None
-    return _ffsession
-
-
 def friendfeed_vote(request, number):
     """
     """
@@ -52,7 +37,12 @@ def friendfeed_vote(request, number):
         return HttpResponseRedirect("/login/")
     uname = request.session['username']
     rkey = request.session['remote_key']
-    favs = ffsession(uname,rkey).fetch_favorites()
+    if 'ffsession' not in request.session:
+        request.session['ffsession'] = friendfeed.FriendFeed(uname, rkey)
+    ffsession = request.session['ffsession']
+    if 'favs' not in request.session:
+        request.session['favs'] = ffsession(uname,rkey).fetch_favorites()
+    favs = request.session['favs']
     blind_entries = []
     for e in favs["entries"]:
         btxt = e[u"body"]
