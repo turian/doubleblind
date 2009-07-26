@@ -4,6 +4,7 @@ from django.template import RequestContext
 from random import shuffle,seed
 from doubleblind.feed.models import Entry,Rating,Poster,Rater
 from django.conf import settings
+import datetime
 
 import friendfeed
 
@@ -44,7 +45,7 @@ def add_vote(request, entry_index, rating):
         poster.save()
     post = Entry(poster=poster,post_id=postData['id'],text=simplejson.dumps(postData))
     post.save()
-    rating = Rating(entry=post,rater=rater,score=rating_score[rating])
+    rating = Rating(time=datetime.date.today(),entry=post,rater=rater,score=rating_score[rating])
     rating.save()
 
 def friendfeed_initialize(request):
@@ -60,8 +61,8 @@ def friendfeed_initialize(request):
     if 'favs' not in request.session:
         favs = ffsession.fetch_favorites()['entries']
         seed()
-    	shuffle(favs) 
-    	request.session['favs'] = []
+        shuffle(favs) 
+        request.session['favs'] = []
         users = {}
         # Find 5 posts by unique people
         for f in favs:
@@ -130,19 +131,12 @@ def friendfeed_vote(request, rating=None):
 
 def friendfeed_results(request):
     results = []
-	if not (('username' in request.session) and ('remote_key' in request.session)):
+    if not (('username' in request.session) and ('remote_key' in request.session)):
         return HttpResponseRedirect("/login/")
-	rater = Rater.objects.get(name=request.session['username'])
-	ratings = Rating.objects.get(rater=rater)
-	posts = [rating.post for rating in ratings]
-    for i in request.session['votes']:
-        # TODO: Gracefully fail instead of assert?
-        assert request.session['votes'][i] in [+1, -1, None]
-#        user = friendfeed.fetch_user_profile(request.session['blind_entries']
-#        request.session['favs'] = ffsession.fetch_favorites()
-        results.append((i, request.session['votes'][i]))
-
-    return render_to_response("results.html", {"results": results, "debug": request.session['votes']}, context_instance=RequestContext(request))
+    rater = Rater.objects.get(name=request.session['username'])
+    ratings = Rating.objects.filter(rater=rater).order_by('time')[:5]
+    entries = [(simplejson.loads(rating.entry.text),rating.score) for rating in ratings]
+    return render_to_response("results.html", {"results": results, "results":entries,"debug": request.session['votes']}, context_instance=RequestContext(request))
 
 def percent(a, b):
     """
