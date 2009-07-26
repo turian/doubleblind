@@ -6,6 +6,7 @@
 {% block content %}
     <center><h1>Blind Feed</h1></center>
 
+    <center>
     <table border=1>
     {% for entry in blind_entries %}
         <tr><td>
@@ -13,6 +14,8 @@
         </td></tr>
     {% endfor %}
     </table>
+    <img src="thumbs-up.jpg">
+    </center>
 
     <pre>
     {{ debug }}
