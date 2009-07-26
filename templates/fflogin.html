@@ -4,6 +4,7 @@
 {%if logged_in%}
 <div>You are already logged in: [<a href="/logout">log out</a>]</div>
 {%else%}
+<h2>You must log into friendfeed to access the feed</h2>
 <form action="/login/" method="post">
   <table style="border-collapse: collapse; border-spacing: 0; padding: 0; margin: 0; font-family: Arial, sans-serif; border: 4px solid #6797d3; color: #222222">
 
