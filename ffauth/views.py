@@ -16,5 +16,12 @@ def login(request):
 			return HttpResponse("did not validate")
 	else:
 		form = FFLoginForm()
-	return render_to_response("fflogin.html",{'form':form})
+	logged_in = (('username' in request.session) and ('remote_key' in request.session))
+	return render_to_response("fflogin.html",{'form':form,'logged_in':logged_in})
 	
+def logout(request):
+	if ('username' in request.session):
+		del request.session['username']
+	if ('remote_key' in request.session):
+		del request.session['remote_key']
+	return render_to_response("logout.html",{})
