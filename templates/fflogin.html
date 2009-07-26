@@ -1,6 +1,7 @@
 {%extends "base.html"%}
 {%block title%}Login{%endblock%}
 {%block content%}
+<center>
 {%if logged_in%}
 <div>You are already logged in: [<a href="/logout">log out</a>] or [<a href="/start">start</a>]</div>
 {%else%}
@@ -34,4 +35,5 @@
   </table>
 </form>
 {%endif%}
+</center>
 {%endblock%}
