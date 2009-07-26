@@ -26,10 +26,13 @@ def twitter_feed(request, user):
     return render_to_response("feed.html", {"timeline": timeline}, context_instance=RequestContext(request))
 
 _ffsession = None
+_last_creds = None
 def ffsession(uname,rkey):
-    global _ffsession
-    if _ffsession is None:
-        _ffsession = friendfeed.FriendFeed(uname,rkey)
+    global _ffsession, _last_creds
+    creds = uname,rkey
+    if _ffsession is None or _last_creds != creds:
+        _ffsession = friendfeed.FriendFeed(uname, rkey)
+        _last_creds = creds
     assert _ffsession is not None
     return _ffsession
 
