@@ -117,6 +117,8 @@ def friendfeed_do_vote(request, rating):
 def friendfeed_vote(request, rating=None):
     """
     """
+    if 'entry_index' not in request.session:
+    	request.session['entry_index'] = 0
     entry_index = request.session['entry_index']
     if entry_index >= ENTRY_SEQUENCE_LENGTH:
         return HttpResponseRedirect("/results/")
