@@ -2,6 +2,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
+from doubleblind.feed.models import Post,Rating,Poster,Rater
 from django.conf import settings
 
 import friendfeed
@@ -25,22 +26,28 @@ def twitter_feed(request, user):
         status.blind_text = usernamere.sub("@anonymous", status.blind_text)
     return render_to_response("feed.html", {"timeline": timeline}, context_instance=RequestContext(request))
 
+rating_score = {'thumbsup':+1,'thumbsdown':-1,'pass':0}
 def add_vote(request, entry_index, rating):
     """
     TODO: This shouldn't be in views
     """
-    # TODO: Don't hardcode these URL names
-    if rating == "thumbsup":
-        request.session['votes'][entry_index] = +1
-    elif rating == "thumbsdown":
-        request.session['votes'][entry_index] = -1
-    elif rating == "pass":
-        request.session['votes'][entry_index] = 0
-    else:
-        # TODO: Return 404
-        assert 0
+    favs = request.session['favs']
+    postData = favs['entries'][entry_index]
+    userData = postData['from']
+    rater,created = Rater.objects.get_or_create(host=request.META['REMOTE_ADDR'])
+    if created:
+       rater.save()
+    poster,created = Poster.objects.get_or_create(name=userData['id'],text=simplejson.dumps(userData))
+    if created:
+        poster.save()
+    post = Post(poster=poster,post_id=postData['id'],text=simplejson.dumps(postData))
+    post.save()
+    rating = Rating(post=post,rater=rater,score=rating_score[rating])
+    rating.save()
+
 def friendfeed_do_vote(request, rating):
     add_vote(request,request.session['entry_index'], rating)
+    request.session['entry_index']+=1
     return HttpResponseRedirect("/vote/")
 
 def friendfeed_vote(request, rating=None):
@@ -103,9 +110,8 @@ def friendfeed_vote(request, rating=None):
     else:
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
         thisurl = "/results/%d" % (entry_index+1)
-    request.session['entry_index'] = entry_index+1
 
-    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['votes'], indent=4)}, context_instance=RequestContext(request))
+    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": favs["entries"][0]['id']}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['blind_entries'], indent=4)}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))

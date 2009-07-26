@@ -3,20 +3,20 @@ from doubleblind.twitterauth.models import UserProfile
 
 class Rating(models.Model):
 	score=models.IntegerField()
-	rater = models.ForeignKey(UserProfile)
+	post = models.ForeignKey("Post")
+	rater = models.ForeignKey("Rater")
 
 class Poster(models.Model):
 	name = models.CharField(max_length=50)
-	poster_id = models.IntegerField()
-	raters = models.ManyToManyField(UserProfile)
+	text = models.CharField(max_length=1000)
 
 class Post(models.Model):
-	post_id = models.IntegerField()
+	post_id = models.CharField(max_length=60)
 	text = models.CharField(max_length=1500)
-	rating = models.ForeignKey(Rating)
 	poster = models.ForeignKey(Poster)
-	raters = models.ManyToManyField(UserProfile)
 
+class Rater(models.Model):
+	host = models.CharField(max_length=75)
 
 # Create your models here.
 
