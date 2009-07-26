@@ -52,5 +52,10 @@ def twitter_return(request):
     # authentication was successful, use is now logged in
 #    foo = twitter.GetFollowers()
 #    return HttpResponse("You are logged in %s" % twitter.GetFriends())
-    return HttpResponse("You are logged in %s" % dir(twitter))
+#    return HttpResponse("You are logged in %s" % dir(twitter))
 #    return HttpResponse("You are logged in" + len(foo))
+    import string
+    return HttpResponse("You are logged in %s" % twitter.GetPublicTimeline())
+#    return HttpResponse("You are logged in %s" % [t, help(t) for t in dir(twitter)] )
+#    return HttpResponse("You are logged in %s" % [(t, help(t)) for t in dir(twitter)] )
+#    return HttpResponse("You are logged in %s" % string.join([(t, help(t) for t in dir(twitter)], "<br>"))
