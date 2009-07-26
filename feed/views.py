@@ -1,7 +1,7 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-
+from random import shuffle
 from django.conf import settings
 
 import friendfeed
@@ -25,18 +25,20 @@ def twitter_feed(request, user):
         status.blind_text = usernamere.sub("@anonymous", status.blind_text)
     return render_to_response("feed.html", {"timeline": timeline}, context_instance=RequestContext(request))
 
-def friendfeed_do_vote(request,entry_index,rating):
-	
+def friendfeed_do_vote(request,rating):
+    if('post_index' not in request.session):
+        request.session['post_index']=-1
+        return HttpResponseRedirect("/vote/")
+    #todo save the vote
+    request.session['post_index']+=1
+    return HttpResponseRedirect("/vote/")
 
 def friendfeed_vote(request):
     """
     """
-    if entry_index is not None:
-        # TODO: Fail gracefully if not an int
-        entry_index = int(entry_index)
-    else:
-        entry_index = -1
-
+    if('post_index' not in request.session):
+        request.session['post_index']=0
+    entry_index = request.session['post_index']
     # TODO: Store previous rating
 
     if not (('username' in request.session) and ('remote_key' in request.session)):
@@ -49,7 +51,7 @@ def friendfeed_vote(request):
         request.session['ffsession'] = friendfeed.FriendFeed(uname, rkey)
     ffsession = request.session['ffsession']
     if 'favs' not in request.session:
-        request.session['favs'] = ffsession(uname,rkey).fetch_favorites()
+        request.session['favs'] = ffsession.fetch_favorites()
     favs = request.session['favs']
     if 'blind_entries' not in request.session:
         request.session['blind_entries'] = []
@@ -71,14 +73,16 @@ def friendfeed_vote(request):
         # TODO: Don't hardcode 5
         # TODO: Unique by author
         request.session['blind_entries'] = request.session['blind_entries'][:5]
+        shuffle(request.session['blind_entries'])
 
-    entry_index += 1
+    request.session['post_index']+= 1
+    entry_index+=1
     if entry_index < len(request.session['blind_entries']):
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
-        thisurl = "/vote/%d" % entry_index
+        thisurl = "/vote"
     else:
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
-        thisurl = "/results/%d" % entry_index
+        thisurl = "/results/"
 
     return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": percent(entry_index, len(request.session['blind_entries']))}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
