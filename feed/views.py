@@ -25,12 +25,31 @@ def twitter_feed(request, user):
         status.blind_text = usernamere.sub("@anonymous", status.blind_text)
     return render_to_response("feed.html", {"timeline": timeline}, context_instance=RequestContext(request))
 
+def add_vote(request, entry_index, rating):
+    """
+    TODO: This shouldn't be in views
+    """
+    if 'votes' not in request.session:
+        request.session['votes'] = {}
+
+    # TODO: Don't hardcode these URL names
+    if rating == "thumbsup":
+        request.session['votes'][entry_index] = +1
+    elif rating == "thumbsdown":
+        request.session['votes'][entry_index] = -1
+    elif rating == "pass":
+        request.session['votes'][entry_index] = None
+    else:
+        # TODO: Return 404
+        assert 0
+
 def friendfeed_vote(request, entry_index=None, rating=None):
     """
     """
     if entry_index is not None:
         # TODO: Fail gracefully if not an int
         entry_index = int(entry_index)
+        add_vote(request, entry_index-1, rating)
     else:
         entry_index = 0
 
