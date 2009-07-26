@@ -131,7 +131,6 @@ def friendfeed_vote(request, rating=None):
 #    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
 
 def friendfeed_results(request):
-    results = []
     if not (('username' in request.session) and ('remote_key' in request.session)):
         return HttpResponseRedirect("/login/")
     if(request.method=='POST'):
@@ -146,7 +145,11 @@ def friendfeed_results(request):
     rater = Rater.objects.get(name=request.session['username'])
     ratings = Rating.objects.filter(rater=rater).order_by('-time')[:5]
     entries = [(simplejson.loads(rating.entry.text),rating.score) for rating in ratings]
-    return render_to_response("results.html", {'form':form, "results":entries,"debug": request.session['votes']}, context_instance=RequestContext(request))
+    entries = [(score, text) for (text, score) in entries]
+    entries.sort()
+    entries.reverse()
+    entries = [(text, score) for (score, text) in entries]
+    return render_to_response("results.html", {"form":form,"results":entries}, context_instance=RequestContext(request))
 
 def percent(a, b):
     """
