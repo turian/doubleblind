@@ -40,9 +40,12 @@ def ffsession(uname,rkey):
     return _ffsession
 
 
-def friendfeed_feed(request):
+def friendfeed_vote(request, number):
     """
     """
+    # TODO: Fail gracefully if not an int
+    number = int(number)
+
     if not (('username' in request.session) and ('remote_key' in request.session)):
 #        uname = settings.FRIENDFEED_NICKNAME
 #        rkey = settings.FRIENDFEED_REMOTE_KEY
@@ -67,5 +70,5 @@ def friendfeed_feed(request):
 #        import re
 #        btxt = re.sub("lt", "gt", btxt)
         blind_entries.append(btxt)
-    return render_to_response("feed.html", {"blind_entries": blind_entries}, context_instance=RequestContext(request))
-#    return render_to_response("feed.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
+    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
+#    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
