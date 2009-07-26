@@ -2,7 +2,7 @@ from django.db import models
 from doubleblind.twitterauth.models import UserProfile
 
 class Rating(models.Model):
-	time = models.DateTimeField()
+	time = models.DateTimeField(auto_now=True)
 	score= models.IntegerField()
 	entry = models.ForeignKey("Entry")
 	rater = models.ForeignKey("Rater")

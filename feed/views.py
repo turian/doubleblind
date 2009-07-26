@@ -46,7 +46,7 @@ def add_vote(request, entry_index, rating):
         poster.save()
     post = Entry(poster=poster,post_id=postData['id'],text=simplejson.dumps(postData))
     post.save()
-    rating = Rating(time=datetime.date.today(),entry=post,rater=rater,score=rating_score[rating])
+    rating = Rating(entry=post,rater=rater,score=rating_score[rating])
     rating.save()
 
 def friendfeed_initialize(request):
@@ -144,7 +144,7 @@ def friendfeed_results(request):
     else:
     	form = EmailForm()
     rater = Rater.objects.get(name=request.session['username'])
-    ratings = Rating.objects.filter(rater=rater).order_by('time')[:5]
+    ratings = Rating.objects.filter(rater=rater).order_by('-time')[:5]
     entries = [(simplejson.loads(rating.entry.text),rating.score) for rating in ratings]
     return render_to_response("results.html", {'form':form, "results":entries,"debug": request.session['votes']}, context_instance=RequestContext(request))
 
