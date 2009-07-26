@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     # (r'^admin/(.*)', admin.site.root),
 
     url(r'^$', welcome, name='welcome'),
+	url(r'^login/$','doubleblind.ffauth.views.login',name='login'),
 #    url('^login/$', twitter_signin, name='login'),  
 #    url('^return/$', twitter_return, name='return'),  
 #    url('^feed/([^/]+)$', twitter_feed, name='feed'),  

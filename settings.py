@@ -73,6 +73,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
 	'doubleblind.twitterauth',
+	'doubleblind.feed',
+	'doubleblind.ffauth',
 )
 
 #CONSUMER_KEY = ""
