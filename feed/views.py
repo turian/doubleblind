@@ -39,21 +39,23 @@ def add_vote(request, entry_index, rating):
     elif rating == "thumbsdown":
         request.session['votes'][entry_index] = -1
     elif rating == "pass":
-        request.session['votes'][entry_index] = None
+        request.session['votes'][entry_index] = 0
     else:
         # TODO: Return 404
         assert 0
 def friendfeed_do_vote(request,rating):
-    add_vote(request,request.session['post_index']-1,rating)
+    add_vote(request,request.session['entry_index'],rating)
     return HttpResponseRedirect("/vote/")
 
 def friendfeed_vote(request):
     """
     """
     if 'entry_index' not in request.session:
-    	request.session['entry_index'] = 0
+        request.session['entry_index'] = 0
     entry_index = request.session['entry_index']
     # TODO: Store previous rating
+    if 'votes' not in request.session:
+        request.session['votes']  = {}
 
     if not (('username' in request.session) and ('remote_key' in request.session)):
 #        uname = settings.FRIENDFEED_NICKNAME
@@ -87,7 +89,7 @@ def friendfeed_vote(request):
         # TODO: Don't hardcode 5
         # TODO: Unique by author
         request.session['blind_entries'] = request.session['blind_entries'][:5]
-    	shuffle(request.session['blind_entries'])
+        shuffle(request.session['blind_entries'])
 
     if entry_index+1 < len(request.session['blind_entries']):
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
@@ -96,12 +98,20 @@ def friendfeed_vote(request):
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
         thisurl = "/results/%d" % (entry_index+1)
     request.session['entry_index'] = entry_index+1
-    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['blind_entries'], indent=4)}, context_instance=RequestContext(request))
-#    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
-#    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
+#    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['votes'], indent=4)}, context_instance=RequestContext(request))
+    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": str(request.session['votes'])}, context_instance=RequestContext(request))
+#    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['blind_entries'], indent=4)}, context_instance=RequestContext(request))
 
-def friendfeed_results(request, entry_index=None, rating=None):
-    pass
+def friendfeed_results(request, entry_index, rating):
+    add_vote(request, entry_index, rating)
+
+    results = []
+    for i in request.session['votes']:
+        # TODO: Gracefully fail instead of assert?
+        assert request.session['votes'][i] in [+1, -1, None]
+        results.append((i, request.session['votes'][i]))
+
+    return render_to_response("results.html", {"results": results, "debug": request.session['votes']}, context_instance=RequestContext(request))
 
 def percent(a, b):
     """
