@@ -88,9 +88,8 @@ def friendfeed_vote(request, rating=None):
             if u in users: continue
             request.session['favs'].append(f)
             users[u] = True
-
-    favs = request.session['favs']
     if 'blind_entries' not in request.session:
+        favs = request.session['favs']
         request.session['blind_entries'] = []
         for e in favs:
             btxt = e[u"body"]
@@ -110,7 +109,7 @@ def friendfeed_vote(request, rating=None):
 
     thisurl = "/vote"
 
-    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": favs}, context_instance=RequestContext(request))
+    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": request.session['votes']}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['blind_entries'], indent=4)}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
