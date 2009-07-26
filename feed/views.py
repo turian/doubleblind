@@ -65,9 +65,28 @@ def friendfeed_vote(request, entry_index=None, rating=None):
     #        import re
     #        btxt = re.sub("lt", "gt", btxt)
             request.session['blind_entries'].append(btxt)
-    # TODO: Don't hardcode thisurl, infer it
+        # TODO: Don't hardcode 5
+        # TODO: Unique by author
+        request.session['blind_entries'] = request.session['blind_entries'][:5]
 
     entry_index += 1
-    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": "/vote/%d" % entry_index}, context_instance=RequestContext(request))
+    if entry_index < len(request.session['blind_entries']):
+        # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
+        thisurl = "/vote/%d" % entry_index
+    else:
+        # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
+        thisurl = "/results/%d" % entry_index
+
+    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": percent(entry_index, len(request.session['blind_entries']))}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
+
+def percent(a, b):
+    """
+    Return percentage string of a and b, e.g.:
+        "1 of 10 (10%)"
+    """
+    assert a <= b
+    assert a >= 0
+    assert b > 0
+    return "%s of %s (%.2f%%)" % (a, b, 100.*a/b)
