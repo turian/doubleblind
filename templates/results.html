@@ -12,7 +12,7 @@
         <tr><td><a href="http://friendfeed.com/{{result.from.id}}">{{result.from.name|safe}}</a><br/><br/>
 			{{result.from.id|safe}}</td>
 		<td> {{ result.body|safe }} 
-        </td><td>{%ifequal score -1%}<img scr="/static/thumbs-down.jpg"/>{%endifequal%}{%ifequal score 0%}------{%endifequal%}{%ifequal score 1%}<img src="/static/thumbs-up.jpg"/>{%endifequal%}</td></tr>
+        </td><td>{%ifequal score -1%}<img src="/static/thumbs-down.jpg"/>{%endifequal%}{%ifequal score 0%}------{%endifequal%}{%ifequal score 1%}<img src="/static/thumbs-up.jpg"/>{%endifequal%}</td></tr>
     {% endfor %}
     </table>
     </center>
