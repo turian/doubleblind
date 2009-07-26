@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+from django.conf import settings
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -30,3 +31,7 @@ urlpatterns = patterns('',
 #    url('^feed/([^/]+)$', twitter_feed, name='feed'),  
     url('^vote/(\d+)$', friendfeed_vote, name='vote'),  
 )
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    )
