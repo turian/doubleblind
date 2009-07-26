@@ -10,7 +10,7 @@ from django.conf import settings
 
 from feed.views import friendfeed_vote, friendfeed_results, friendfeed_do_vote
 
-from views import welcome, start
+from views import start
 
 urlpatterns = patterns('',
     # Example:
@@ -23,7 +23,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # (r'^admin/(.*)', admin.site.root),
 
-    url(r'^$', welcome, name='welcome'),
+    url(r'^$', start, name='start'),
 	url(r'^start/$', start, name='start'),
 	url(r'^login/$','doubleblind.ffauth.views.login',name='login'),
 	url(r'^logout/$','doubleblind.ffauth.views.logout',name='logout'),
