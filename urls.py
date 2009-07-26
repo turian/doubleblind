@@ -8,7 +8,7 @@ from django.conf import settings
 #from twitterauth.views import twitter_signin, twitter_return
 #from feed.views import twitter_feed
 
-from feed.views import friendfeed_vote
+from feed.views import friendfeed_vote, friendfeed_results
 
 from views import welcome
 
@@ -31,6 +31,7 @@ urlpatterns = patterns('',
 #    url('^feed/([^/]+)$', twitter_feed, name='feed'),  
     url('^vote/$', friendfeed_vote, name='vote'),  
     url('^vote/(?P<entry_index>\d+)/(?P<rating>[^\/]+)$', friendfeed_vote, name='vote'),  
+    url('^results/(?P<entry_index>\d+)/(?P<rating>[^\/]+)$', friendfeed_results, name='results'),
 )
 if settings.DEBUG:
     urlpatterns += patterns('',

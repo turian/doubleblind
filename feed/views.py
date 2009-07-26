@@ -80,6 +80,9 @@ def friendfeed_vote(request, entry_index=None, rating=None):
 #    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
 
+def friendfeed_results(request, entry_index=None, rating=None):
+    pass
+
 def percent(a, b):
     """
     Return percentage string of a and b, e.g.:
