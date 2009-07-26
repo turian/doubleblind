@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from random import shuffle,seed
 from doubleblind.feed.models import Entry,Rating,Poster,Rater
+from doubleblind.feed.forms import EmailForm
 from django.conf import settings
 import datetime
 
@@ -133,10 +134,19 @@ def friendfeed_results(request):
     results = []
     if not (('username' in request.session) and ('remote_key' in request.session)):
         return HttpResponseRedirect("/login/")
+    if(request.method=='POST'):
+        form = EmailForm(request.POST)
+        if(form.is_valid()):
+        	rater = Rater.objects.get(name=request.session['username'])
+        	rater.email=form.cleaned_data['email']
+        	rater.save()
+        	return render_to_response("thanks.html", {}, context_instance=RequestContext(request))
+    else:
+    	form = EmailForm()
     rater = Rater.objects.get(name=request.session['username'])
     ratings = Rating.objects.filter(rater=rater).order_by('time')[:5]
     entries = [(simplejson.loads(rating.entry.text),rating.score) for rating in ratings]
-    return render_to_response("results.html", {"results": results, "results":entries,"debug": request.session['votes']}, context_instance=RequestContext(request))
+    return render_to_response("results.html", {'form':form, "results":entries,"debug": request.session['votes']}, context_instance=RequestContext(request))
 
 def percent(a, b):
     """

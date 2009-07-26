@@ -18,6 +18,7 @@ class Entry(models.Model):
 
 class Rater(models.Model):
 	name = models.CharField(max_length=75)
+	email = models.CharField(blank=True,max_length=100)
 
 # Create your models here.
 
