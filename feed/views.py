@@ -35,23 +35,23 @@ def add_vote(request, entry_index, rating):
     elif rating == "thumbsdown":
         request.session['votes'][entry_index] = -1
     elif rating == "pass":
-        request.session['votes'][entry_index] = None
+        request.session['votes'][entry_index] = 0
     else:
         # TODO: Return 404
         assert 0
+def friendfeed_do_vote(request, rating):
+    add_vote(request,request.session['entry_index'], rating)
+    return HttpResponseRedirect("/vote/")
 
-def friendfeed_vote(request, entry_index=None, rating=None):
+def friendfeed_vote(request, rating=None):
     """
     """
-    if entry_index is not None:
-        # TODO: Fail gracefully if not an int
-        entry_index = int(entry_index)
-        add_vote(request, entry_index-1, rating)
-    else:
-        entry_index = 0
-
+    if 'entry_index' not in request.session:
+        request.session['entry_index'] = 0
+    entry_index = request.session['entry_index']
+    # TODO: Store previous rating
     if 'votes' not in request.session:
-        request.session['votes'] = {}
+        request.session['votes']  = {}
 
     # TODO: Store previous rating
 
@@ -99,10 +99,11 @@ def friendfeed_vote(request, entry_index=None, rating=None):
 
     if entry_index+1 < len(request.session['blind_entries']):
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
-        thisurl = "/vote/%d" % (entry_index+1)
+        thisurl = "/vote"
     else:
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
         thisurl = "/results/%d" % (entry_index+1)
+    request.session['entry_index'] = entry_index+1
 
     return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['votes'], indent=4)}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['blind_entries'], indent=4)}, context_instance=RequestContext(request))
