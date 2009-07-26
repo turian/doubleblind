@@ -133,6 +133,13 @@ def friendfeed_vote(request, rating=None):
 def friendfeed_results(request):
     if not (('username' in request.session) and ('remote_key' in request.session)):
         return HttpResponseRedirect("/login/")
+    rater = Rater.objects.get(name=request.session['username'])
+    ratings = Rating.objects.filter(rater=rater).order_by('-time')[:5]
+    entries = [(simplejson.loads(rating.entry.text),rating.score) for rating in ratings]
+    entries = [(score, text) for (text, score) in entries]
+    entries.sort()
+    entries.reverse()
+    entries = [(text, score) for (score, text) in entries]
     if(request.method=='POST'):
         form = EmailForm(request.POST)
         if(form.is_valid()):
@@ -140,7 +147,7 @@ def friendfeed_results(request):
             rater.email=form.cleaned_data['email']
             rater.has_been_prompted = True
             rater.save()
-            return render_to_response("thanks.html", {}, context_instance=RequestContext(request))
+            return render_to_response("thanks.html", {'form':form,'results':entries}, context_instance=RequestContext(request))
     else:
         form = EmailForm()
         rater = Rater.objects.get(name=request.session['username'])
@@ -150,13 +157,6 @@ def friendfeed_results(request):
             form = EmailForm()
             return render_to_response("email_prompt.html",{'form':form})
 
-    rater = Rater.objects.get(name=request.session['username'])
-    ratings = Rating.objects.filter(rater=rater).order_by('-time')[:5]
-    entries = [(simplejson.loads(rating.entry.text),rating.score) for rating in ratings]
-    entries = [(score, text) for (text, score) in entries]
-    entries.sort()
-    entries.reverse()
-    entries = [(text, score) for (score, text) in entries]
     return render_to_response("results.html", {"form":form,"results":entries}, context_instance=RequestContext(request))
 
 def percent(a, b):

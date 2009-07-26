@@ -5,7 +5,8 @@
 
 {% block content %}
     <center><h1>Doubleblind Results</h1></center>
-
+	{%block message%}
+	{%endblock%}
     <center>
     <table border=1>
     {% for result,score in results %}
