@@ -29,7 +29,7 @@ urlpatterns = patterns('',
 #    url('^login/$', twitter_signin, name='login'),  
 #    url('^return/$', twitter_return, name='return'),  
 #    url('^feed/([^/]+)$', twitter_feed, name='feed'),  
-    url('^vote/(\d+)$', friendfeed_vote, name='vote'),  
+    url('^vote/(?P<entry_index>\d*)/{0,1}(?P<rating>\c*)/{0,1}$', friendfeed_vote, name='vote'),  
 )
 if settings.DEBUG:
     urlpatterns += patterns('',

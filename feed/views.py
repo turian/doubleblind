@@ -40,7 +40,7 @@ def ffsession(uname,rkey):
     return _ffsession
 
 
-def friendfeed_vote(request, number):
+def friendfeed_vote(request, entry_index=None,rating=None):
     """
     """
     # TODO: Fail gracefully if not an int
