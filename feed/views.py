@@ -28,6 +28,9 @@ def twitter_feed(request, user):
 _ffsession = None
 _last_creds = None
 def ffsession(uname,rkey):
+    """
+    Cache the session with the last credentials.
+    """
     global _ffsession, _last_creds
     creds = uname,rkey
     if _ffsession is None or _last_creds != creds:
@@ -47,6 +50,16 @@ def friendfeed_feed(request):
         return HttpResponseRedirect("/login/")
     uname = request.session['username']
     rkey = request.session['remote_key']
-    fstr = simplejson.dumps(ffsession(uname,rkey).fetch_favorites())
-    #+ ffsession.fetch_public_feed()
-    return render_to_response("feed.html", {"debug": [fstr]}, context_instance=RequestContext(request))
+    favs = ffsession(uname,rkey).fetch_favorites()
+    blind_entries = []
+    for e in favs["entries"]:
+        btxt = e[u"body"]
+        if "thumbnails" in e:
+            for t in e["thumbnails"]:
+                btxt += "<img src='%s' width=%d height=%d>" % (t["url"], t["width"], t["height"])
+                # TODO: Add URL link
+        import re
+        btxt = re.sub("lt", "gt", btxt)
+        blind_entries.append(btxt)
+    return render_to_response("feed.html", {"blind_entries": blind_entries}, context_instance=RequestContext(request))
+#    return render_to_response("feed.html", {"entries": [simplejson.dumps(e, indent=4) for e in favs["entries"]]}, context_instance=RequestContext(request))

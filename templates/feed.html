@@ -10,12 +10,10 @@
     {{ debug }}
     </pre>
 
-    <table>
-    {% for entry in entries %}
+    <table border=1>
+    {% for entry in blind_entries %}
         <tr><td>
-        <pre>
-            {{ entry }} 
-        </pre>
+            {{ entry|safe }} 
         </td></tr>
     {% endfor %}
     </table>
