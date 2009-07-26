@@ -31,7 +31,7 @@ urlpatterns = patterns('',
 #    url('^feed/([^/]+)$', twitter_feed, name='feed'),  
     url('^vote/$', friendfeed_vote, name='vote'),  
     url('^vote/(?P<rating>[^\/]+)$', friendfeed_do_vote, name='vote'),  
-    url('^results/(?P<entry_index>\d+)/(?P<rating>[^\/]+)$', friendfeed_results, name='results'),
+    url('^results/', friendfeed_results, name='results'),
 )
 if settings.DEBUG:
     urlpatterns += patterns('',
