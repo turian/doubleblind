@@ -136,12 +136,20 @@ def friendfeed_results(request):
     if(request.method=='POST'):
         form = EmailForm(request.POST)
         if(form.is_valid()):
-        	rater = Rater.objects.get(name=request.session['username'])
-        	rater.email=form.cleaned_data['email']
-        	rater.save()
-        	return render_to_response("thanks.html", {}, context_instance=RequestContext(request))
+            rater = Rater.objects.get(name=request.session['username'])
+            rater.email=form.cleaned_data['email']
+            rater.has_been_prompted = True
+            rater.save()
+            return render_to_response("thanks.html", {}, context_instance=RequestContext(request))
     else:
-    	form = EmailForm()
+        form = EmailForm()
+        rater = Rater.objects.get(name=request.session['username'])
+        if (not rater.has_been_prompted):
+            rater.has_been_prompted = True
+            rater.save()
+            form = EmailForm()
+            return render_to_response("email_prompt.html",{'form':form})
+
     rater = Rater.objects.get(name=request.session['username'])
     ratings = Rating.objects.filter(rater=rater).order_by('-time')[:5]
     entries = [(simplejson.loads(rating.entry.text),rating.score) for rating in ratings]
