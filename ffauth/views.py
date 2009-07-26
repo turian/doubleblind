@@ -21,6 +21,7 @@ def login(request):
 	return render_to_response("fflogin.html",{'form':form,'logged_in':logged_in})
 	
 def logout(request):
-    for k in ["username", "remote_key", "ff_auth", "blind_entries", "ffsession", "favs"]:
+    #for k in ["username", "remote_key", "ff_auth", "blind_entries", "ffsession", "favs"]:
+    for k in request.session.keys():
 		del request.session[k]
-	return render_to_response("fflogout.html",{})
+    return render_to_response("fflogout.html",{})

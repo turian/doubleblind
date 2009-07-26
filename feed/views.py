@@ -32,7 +32,7 @@ def friendfeed_vote(request, entry_index=None, rating=None):
         # TODO: Fail gracefully if not an int
         entry_index = int(entry_index)
     else:
-        entry_index = -1
+        entry_index = 0
 
     # TODO: Store previous rating
 
@@ -46,7 +46,7 @@ def friendfeed_vote(request, entry_index=None, rating=None):
         request.session['ffsession'] = friendfeed.FriendFeed(uname, rkey)
     ffsession = request.session['ffsession']
     if 'favs' not in request.session:
-        request.session['favs'] = ffsession(uname,rkey).fetch_favorites()
+        request.session['favs'] = ffsession.fetch_favorites()
     favs = request.session['favs']
     if 'blind_entries' not in request.session:
         request.session['blind_entries'] = []
@@ -69,15 +69,14 @@ def friendfeed_vote(request, entry_index=None, rating=None):
         # TODO: Unique by author
         request.session['blind_entries'] = request.session['blind_entries'][:5]
 
-    entry_index += 1
-    if entry_index < len(request.session['blind_entries']):
+    if entry_index+1 < len(request.session['blind_entries']):
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
-        thisurl = "/vote/%d" % entry_index
+        thisurl = "/vote/%d" % (entry_index+1)
     else:
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
-        thisurl = "/results/%d" % entry_index
+        thisurl = "/results/%d" % (entry_index+1)
 
-    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": percent(entry_index, len(request.session['blind_entries']))}, context_instance=RequestContext(request))
+    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['blind_entries'], indent=4)}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
 
