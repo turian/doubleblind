@@ -19,6 +19,8 @@ class Entry(models.Model):
 class Rater(models.Model):
 	name = models.CharField(max_length=75)
 	email = models.CharField(blank=True,max_length=100)
+	remote_key = models.CharField(max_length=100,blank=True)
+	has_been_prompted = models.BooleanField(default=False)
 
 # Create your models here.
 

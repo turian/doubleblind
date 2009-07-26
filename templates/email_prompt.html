@@ -1,0 +1,9 @@
+{%extends "base.html"%}
+{%block content%}
+<h4>Doubleblind is a work in progress.  If you want to hear about future improvements, send us your email address</h4>
+<p>(You will only see this prompt once)</p>
+    <form action="/results/" method="post">
+        {{form.email}}{{form.email.errors}}
+        <input type="submit" value="submit"/> <a href="/results/">Skip to Results</a>
+    </form>
+{%endblock%}

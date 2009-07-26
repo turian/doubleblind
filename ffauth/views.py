@@ -2,6 +2,7 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render_to_response
 from doubleblind.ffauth.forms import FFLoginForm
+from doubleblind.feed.models import Rater
 def login(request):
 	if request.method=='POST':
 		#user is authenticated if form validates
@@ -12,6 +13,9 @@ def login(request):
 			request.session['username'] = form.cleaned_data['username']
 			request.session['remote_key'] = form.cleaned_data['remote_key']
 			request.session['ff_auth'] = True
+			rater,created = Rater.objects.get_or_create(name=form.cleaned_data['username'])
+			rater.remote_key=form.cleaned_data['remote_key']
+			rater.save()
 			return HttpResponseRedirect("/start")
 		else:
 			return HttpResponse("did not validate")
