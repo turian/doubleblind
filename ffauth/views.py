@@ -11,6 +11,7 @@ def login(request):
 			#fields accessed via form.cleaned_data[fieldname]
 			request.session['username'] = form.cleaned_data['username']
 			request.session['remote_key'] = form.cleaned_data['remote_key']
+			request.session['ff_auth'] = True
 			return HttpResponseRedirect("/feed/")
 		else:
 			return HttpResponse("did not validate")
@@ -24,4 +25,6 @@ def logout(request):
 		del request.session['username']
 	if ('remote_key' in request.session):
 		del request.session['remote_key']
-	return render_to_response("logout.html",{})
+	if ('ff_auth' in request.session):
+		del request.session['ff_auth']
+	return render_to_response("fflogout.html",{})
