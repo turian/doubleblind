@@ -79,6 +79,12 @@ class FriendFeed(object):
         """
         return self._fetch_feed("/api/feed/public", **kwargs)
 
+    def fetch_user_profile(self, nickname, **kwargs):
+        """Returns the profile of the given user."""
+        return self._fetch_feed(
+            "/api/user/" + urllib.quote_plus(nickname) + "/profile",
+            **kwargs)
+
     def fetch_user_feed(self, nickname, **kwargs):
         """Returns the entries shared by the user with the given nickname.
 

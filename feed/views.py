@@ -29,9 +29,6 @@ def add_vote(request, entry_index, rating):
     """
     TODO: This shouldn't be in views
     """
-    if 'votes' not in request.session:
-        request.session['votes'] = {}
-
     # TODO: Don't hardcode these URL names
     if rating == "thumbsup":
         request.session['votes'][entry_index] = +1
@@ -53,6 +50,9 @@ def friendfeed_vote(request, entry_index=None, rating=None):
     else:
         entry_index = 0
 
+    if 'votes' not in request.session:
+        request.session['votes'] = {}
+
     # TODO: Store previous rating
 
     if not (('username' in request.session) and ('remote_key' in request.session)):
@@ -65,11 +65,23 @@ def friendfeed_vote(request, entry_index=None, rating=None):
         request.session['ffsession'] = friendfeed.FriendFeed(uname, rkey)
     ffsession = request.session['ffsession']
     if 'favs' not in request.session:
-        request.session['favs'] = ffsession.fetch_favorites()
+        favs = ffsession.fetch_favorites()['entries']
+        request.session['favs'] = []
+        users = {}
+        # Find 5 posts by unique people
+        for f in favs:
+            # TODO: Don't hardcode 5
+            if len(request.session['favs']) >= 5: break
+            u = f["from"]["id"]
+            # Unique posts by author
+            if u in users: continue
+            request.session['favs'].append(f)
+            users[u] = True
+
     favs = request.session['favs']
     if 'blind_entries' not in request.session:
         request.session['blind_entries'] = []
-        for e in favs["entries"]:
+        for e in favs:
             btxt = e[u"body"]
             if "thumbnails" in e:
                 btxt += "<br>"
@@ -84,9 +96,6 @@ def friendfeed_vote(request, entry_index=None, rating=None):
     #        import re
     #        btxt = re.sub("lt", "gt", btxt)
             request.session['blind_entries'].append(btxt)
-        # TODO: Don't hardcode 5
-        # TODO: Unique by author
-        request.session['blind_entries'] = request.session['blind_entries'][:5]
 
     if entry_index+1 < len(request.session['blind_entries']):
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
@@ -107,6 +116,8 @@ def friendfeed_results(request, entry_index, rating):
     for i in request.session['votes']:
         # TODO: Gracefully fail instead of assert?
         assert request.session['votes'][i] in [+1, -1, None]
+#        user = friendfeed.fetch_user_profile(request.session['blind_entries']
+#        request.session['favs'] = ffsession.fetch_favorites()
         results.append((i, request.session['votes'][i]))
 
     return render_to_response("results.html", {"results": results, "debug": request.session['votes']}, context_instance=RequestContext(request))
