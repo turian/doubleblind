@@ -49,9 +49,11 @@ def add_vote(request, entry_index, rating):
     rating = Rating(entry=post,rater=rater,score=rating_score[rating])
     rating.save()
 
-def friendfeed_initialize(request):
+def friendfeed_initialize_trials(request):
     """
     Initialize the friendfeed session, given the current authentication information.
+    We will start a new set of trials, even if one currently exists
+    (e.g. the user stops halfway through and reloads the start page.)
     TODO: Move this out of views.py
     """
     uname = request.session['username']
@@ -59,6 +61,14 @@ def friendfeed_initialize(request):
     if 'ffsession' not in request.session:
         request.session['ffsession'] = friendfeed.FriendFeed(uname, rkey)
     ffsession = request.session['ffsession']
+    if 'favs' in request.session:
+        del request.session['favs']
+    if 'blind_entries' in request.session:
+        del request.session['blind_entries']
+    if 'entry_index' in request.session:
+        del request.session['entry_index']
+    if 'entry_index' not in request.session:
+        request.session['entry_index'] = 0
     if 'favs' not in request.session:
         favs = ffsession.fetch_favorites()['entries']
         seed()
@@ -107,8 +117,6 @@ def friendfeed_do_vote(request, rating):
 def friendfeed_vote(request, rating=None):
     """
     """
-    if 'entry_index' not in request.session:
-        request.session['entry_index'] = 0
     entry_index = request.session['entry_index']
     if entry_index >= ENTRY_SEQUENCE_LENGTH:
         return HttpResponseRedirect("/results/")
