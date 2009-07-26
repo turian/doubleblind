@@ -7,21 +7,18 @@
     <center><h1>Blind Trial, {{ percentstr }}</h1></center>
 
     <center>
-    <table border=1>
-        <tr><td colspan=3>
+    <table cellpadding=24 width=80%>
+        <tr><td colspan=3 bgcolor="#f8b8b8">
             {{ entry|safe }} 
         </td></tr>
 
         <tr>
-            <td><a href="{{ thisurl }}/thumbsdown"><img align=left src="/static/thumbs-down.jpg"></a></td>
-            <td><a href="{{ thisurl }}/pass"><center>Pass</center></a></td>
-            <td><a href="{{ thisurl }}/thumbsup"><img align=right src="/static/thumbs-up.jpg"></a></td>
+            <td align=center><a href="{{ thisurl }}/thumbsdown"><img border=0 src="/static/thumbs-down.jpg"></a></td>
+            <td align=center><a href="{{ thisurl }}/pass"><center>Pass</center></a></td>
+            <td align=center><a href="{{ thisurl }}/thumbsup"><img border=0 src="/static/thumbs-up.jpg"></a></td>
         </tr>
     </table>
     </center>
-
-    You should pass if you know who the author is, or simply if you do
-    not want to vote on this entry.
 
     <pre>
     {{ debug }}
