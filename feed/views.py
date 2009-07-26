@@ -25,11 +25,11 @@ def twitter_feed(request, user):
         status.blind_text = usernamere.sub("@anonymous", status.blind_text)
     return render_to_response("feed.html", {"timeline": timeline}, context_instance=RequestContext(request))
 
-def friendfeed_vote(request, entry_index=None,rating=None):
+def friendfeed_vote(request, entry_index=None, rating=None):
     """
     """
     # TODO: Fail gracefully if not an int
-    number = int(number)
+    entry_index = int(entry_index)
 
     if not (('username' in request.session) and ('remote_key' in request.session)):
 #        uname = settings.FRIENDFEED_NICKNAME
@@ -61,6 +61,8 @@ def friendfeed_vote(request, entry_index=None,rating=None):
     #        btxt = re.sub("lt", "gt", btxt)
             request.session['blind_entries'].append(btxt)
     # TODO: Don't hardcode thisurl, infer it
-    return render_to_response("vote.html", {"entry": request.session['blind_entries'][number], "thisurl": "/vote/%d" % number}, context_instance=RequestContext(request))
+
+    entry_index += 1
+    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": "/vote/%d" % entry_index}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
