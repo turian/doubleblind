@@ -11,9 +11,9 @@ def login(request):
 			#fields accessed via form.cleaned_data[fieldname]
 			request.session['username'] = form.cleaned_data['username']
 			request.session['remote_key'] = form.cleaned_data['remote_key']
-			HttpResponseRedirect("/feed/")
+			return HttpResponseRedirect("/feed/")
 		else:
-			HttpResponse("did not validate")
+			return HttpResponse("did not validate")
 	else:
 		form = FFLoginForm()
 	return render_to_response("fflogin.html",{'form':form})
