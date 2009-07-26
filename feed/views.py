@@ -2,6 +2,10 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
+from django.conf import settings
+
+import friendfeed
+
 import simplejson
 
 def twitter_feed(request, user):
@@ -21,8 +25,16 @@ def twitter_feed(request, user):
         status.blind_text = usernamere.sub("@anonymous", status.blind_text)
     return render_to_response("feed.html", {"timeline": timeline}, context_instance=RequestContext(request))
 
-=======
-def friendfeed(request):
+_session = None
+def session():
+    global _session
+    if _session is None:
+        _session = friendfeed.FriendFeed(settings.FRIENDFEED_NICKNAME, settings.FRIENDFEED_REMOTE_KEY)
+    assert _session is not None
+    return _session
+
+
+def friendfeed_feed(request):
     """
     """
-    return render_to_response("feed.html", {"timeline": []}, context_instance=RequestContext(request))
+    return render_to_response("feed.html", {"timeline": [session()]}, context_instance=RequestContext(request))
