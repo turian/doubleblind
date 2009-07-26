@@ -20,6 +20,7 @@
 #  behavior from the original function.) If False, we do not parse the date
 #  string into a datetime instance. Leaving it as a string makes it simpler
 #  to JSON the object.
+#  I also added some v2 methods, and added parameter baseurl to _fetch
 #
 
 """Methods to interact with the FriendFeed API
@@ -119,6 +120,11 @@ class FriendFeed(object):
         Authentication is always required.
         """
         return self._fetch_feed("/api/feed/home", **kwargs)
+
+    def fetch_favorites(self, days=1, **kwargs):
+        """Returns the "best of" for the previous day.
+        """
+        return self._fetch_feed("/v2/feed/summary/%d" % days, baseurl="http://friendfeed-api.com", **kwargs)
 
     def search(self, q, **kwargs):
         """Searches over entries in FriendFeed.
@@ -251,10 +257,10 @@ class FriendFeed(object):
             "entry": entry_id,
         })
 
-    def _fetch_feed(self, uri, post_args=None, parse_date=False, **kwargs):
+    def _fetch_feed(self, uri, baseurl="http://friendfeed.com", post_args=None, parse_date=False, **kwargs):
         """Publishes to the given URI and parses the returned JSON feed."""
         # Parse all the dates in the result JSON
-        result = self._fetch(uri, post_args, **kwargs)
+        result = self._fetch(uri, post_args, baseurl=baseurl, **kwargs)
         rfc3339_date = "%Y-%m-%dT%H:%M:%SZ"
         date_properties = frozenset(("updated", "published"))
         if parse_date:
@@ -267,10 +273,10 @@ class FriendFeed(object):
                     like["date"] = self._parse_date(like["date"])
         return result
 
-    def _fetch(self, uri, post_args, **url_args):
+    def _fetch(self, uri, post_args, baseurl="http://friendfeed.com", **url_args):
         url_args["format"] = "json"
         args = urllib.urlencode(url_args)
-        url = "http://friendfeed.com" + uri + "?" + args
+        url = baseurl + uri + "?" + args
         if post_args is not None:
             request = urllib2.Request(url, urllib.urlencode(post_args))
         else:

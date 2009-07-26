@@ -25,16 +25,18 @@ def twitter_feed(request, user):
         status.blind_text = usernamere.sub("@anonymous", status.blind_text)
     return render_to_response("feed.html", {"timeline": timeline}, context_instance=RequestContext(request))
 
-_session = None
-def session():
-    global _session
-    if _session is None:
-        _session = friendfeed.FriendFeed(settings.FRIENDFEED_NICKNAME, settings.FRIENDFEED_REMOTE_KEY)
-    assert _session is not None
-    return _session
+_ffsession = None
+def ffsession():
+    global _ffsession
+    if _ffsession is None:
+        _ffsession = friendfeed.FriendFeed(settings.FRIENDFEED_NICKNAME, settings.FRIENDFEED_REMOTE_KEY)
+    assert _ffsession is not None
+    return _ffsession
 
 
 def friendfeed_feed(request):
     """
     """
-    return render_to_response("feed.html", {"timeline": [session()]}, context_instance=RequestContext(request))
+    fstr = simplejson.dumps(ffsession().fetch_favorites())
+    #+ ffsession.fetch_public_feed()
+    return render_to_response("feed.html", {"debug": [fstr]}, context_instance=RequestContext(request))
