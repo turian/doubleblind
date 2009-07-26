@@ -95,12 +95,21 @@ def friendfeed_vote(request, entry_index=None, rating=None):
         # TODO: Don't hardcode thisurl, infer it from urls.py or somewhere
         thisurl = "/results/%d" % (entry_index+1)
 
-    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['blind_entries'], indent=4)}, context_instance=RequestContext(request))
+    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['votes'], indent=4)}, context_instance=RequestContext(request))
+#    return render_to_response("vote.html", {"entry": request.session['blind_entries'][entry_index], "thisurl": thisurl, "percentstr": "%s done" % percent(entry_index, len(request.session['blind_entries'])), "debug": simplejson.dumps(request.session['blind_entries'], indent=4)}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": [blind_entries[number]]}, context_instance=RequestContext(request))
 #    return render_to_response("vote.html", {"blind_entries": blind_entries, "debug": simplejson.dumps(favs, indent=4)}, context_instance=RequestContext(request))
 
-def friendfeed_results(request, entry_index=None, rating=None):
-    pass
+def friendfeed_results(request, entry_index, rating):
+    add_vote(request, entry_index, rating)
+
+    results = []
+    for i in request.session['votes']:
+        # TODO: Gracefully fail instead of assert?
+        assert request.session['votes'][i] in [+1, -1, None]
+        results.append((i, request.session['votes'][i]))
+
+    return render_to_response("results.html", {"results": results, "debug": request.session['votes']}, context_instance=RequestContext(request))
 
 def percent(a, b):
     """
