@@ -9,6 +9,8 @@ import friendfeed
 
 import simplejson
 
+ENTRY_SEQUENCE_LENGTH = 5
+
 def twitter_feed(request, user):
     """
     TODO: Want to get the user's timeline, not the public timeline.
@@ -46,6 +48,8 @@ def add_vote(request, entry_index, rating):
     rating.save()
 
 def friendfeed_do_vote(request, rating):
+    if not (('username' in request.session) and ('remote_key' in request.session)):
+        return HttpResponseRedirect("/login/")
     add_vote(request,request.session['entry_index'], rating)
     request.session['entry_index']+=1
     entry_index = request.session['entry_index']
@@ -60,6 +64,8 @@ def friendfeed_vote(request, rating=None):
     if 'entry_index' not in request.session:
         request.session['entry_index'] = 0
     entry_index = request.session['entry_index']
+    if entry_index >= ENTRY_SEQUENCE_LENGTH:
+        return HttpResponseRedirect("/results/")
     # TODO: Store previous rating
     if 'votes' not in request.session:
         request.session['votes']  = {}
@@ -82,7 +88,7 @@ def friendfeed_vote(request, rating=None):
         # Find 5 posts by unique people
         for f in favs:
             # TODO: Don't hardcode 5
-            if len(request.session['favs']) >= 5: break
+            if len(request.session['favs']) >= ENTRY_SEQUENCE_LENGTH: break
             u = f["from"]["id"]
             # Unique posts by author
             if u in users: continue
