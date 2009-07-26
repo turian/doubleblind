@@ -6,12 +6,16 @@
 {% block content %}
     <center><h1>Blind Feed</h1></center>
 
+    <pre>
     {{ debug }}
+    </pre>
 
     <table>
-    {% for status in timeline %}
+    {% for entry in entries %}
         <tr><td>
-            {{ status.blind_text }} 
+        <pre>
+            {{ entry }} 
+        </pre>
         </td></tr>
     {% endfor %}
     </table>

@@ -38,10 +38,15 @@ def friendfeed_feed(request):
     """
     """
     if not (('username' in request.session) and ('remote_key' in request.session)):
-        return HttpResponse('missed info')
-        return HttpResponseRedirect("/login/")
-    uname = request.session['username']
-    rkey = request.session['remote_key']
+        uname = settings.FRIENDFEED_NICKNAME
+        rkey = settings.FRIENDFEED_REMOTE_KEY
+#        return HttpResponse('missed info')
+#        return HttpResponseRedirect("/login/")
+    else:
+        uname = request.session['username']
+        rkey = request.session['remote_key']
+#    uname = request.session['username']
+#    rkey = request.session['remote_key']
     fstr = simplejson.dumps(ffsession(uname,rkey).fetch_favorites())
     #+ ffsession.fetch_public_feed()
     return render_to_response("feed.html", {"debug": [fstr]}, context_instance=RequestContext(request))
